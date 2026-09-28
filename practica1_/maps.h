@@ -1,3 +1,6 @@
+#ifndef MAPS_H
+#define MAPS_H
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -5,7 +8,6 @@
 #include <sstream>
 
 using namespace std;
-
 class Maps{
   public:
     Maps() {}
@@ -22,17 +24,43 @@ class Maps{
           }  
         }
       }
+      for (int i = 0; i < mapa_.size(); i++) {
+        for (int j = 0; j < mapa_[i].size(); j++) {
+          if (mapa_[i][j] == 0) {
+            origen_.first = i;
+            origen_.second = j;
+          }
+          if (mapa_[i][j] == 10) {
+            destino_.first = i;
+            destino_.second = j;
+          }
+        }
+      }
     }
     void Show() {
-      for (int i = 0; i < mapa_[0].size(); i++) {
-        for (int j = 0; j < mapa_.size(); j++) {
+      for (int i = 0; i < mapa_.size(); i++) {
+        for (int j = 0; j < mapa_[i].size(); j++) {
           cout << mapa_[i][j] << " ";
         }
         cout << endl;
       }
     }
-    int size_x() { return mapa_.size(); }
-    int size_y() { return mapa_[0].size(); }
+    int rows() { return mapa_.size(); }
+    int columns() { return mapa_[0].size(); }
+    int get(int row, int column) {
+      return mapa_[row][column];
+    }
+    
+    pair<int, int> origen() {
+      return origen_;
+    }
+    pair<int, int> destino() {
+      return destino_;
+    }
   private:
     vector<vector<int>> mapa_;
+    std::pair<int, int> origen_;
+    std::pair<int, int> destino_;
 };
+
+#endif
