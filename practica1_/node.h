@@ -35,6 +35,10 @@ public:
   int column_padre() {
     return column_padre_;
   }
+  friend std::ostream& operator<<(std::ostream& os, const Node& node) {
+    os << "{" << node.row_ << ", " << node.column_ << "}";
+    return os;
+  }
 
 private:
   int row_padre_;

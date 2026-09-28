@@ -19,31 +19,40 @@ class AStart {
       node_open.set_h(Heuristic(node_open));
       node_open.set_f(node_open.g() + node_open.h());
       open_.push_back(node_open);
+      Neighbors_(node_open);
+      ShowNeighbors();
     }
     //Metodos que representan operaciones esenciales del A*
     Node node_open() { return open_[0]; }
     vector<Node> Neighbors_(Node node) {
       vector<Node> result;
-      if (0 > node.column()) {
+      //Izquierda
+      if (0 < node.column()) {
         Node izquierda (node.row(), node.column() - 1);
         result.push_back(izquierda);
       } 
-      if (mapa_.columns() < node.column()) {
+      //derecha
+      if (mapa_.columns() - 1 > node.column()) {
         Node derecha (node.row(), node.column() + 1);
         result.push_back(derecha);
       } 
-      if (0 > node.row()) {
+      //arriba
+      if (0 < node.row()) {
         Node arriba (node.row() - 1, node.column());
         result.push_back(arriba);
       } 
-      if (mapa_.columns() < node.column()) {
+      //abajo
+      if (mapa_.rows() - 1 > node.row()) {
         Node abajo (node.row() + 1, node.column());
         result.push_back(abajo);
       }
       return result;
     }
-    
-
+    void ShowNeighbors() {
+      for (int i = 0; i < neighbors_.size(); i++) {
+        cout << "Vecino: " << neighbors_[i] << "\n";
+      }
+    }
     //Metodos Show
     void ShowOpen() {
       std::cout << "Se muestran los nodos abiertos: \n";
