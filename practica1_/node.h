@@ -23,6 +23,11 @@ public:
   void set_g(int g) { g_ = g; }
   void set_h(int h) { h_ = h; }
   void set_f(int f) { f_ = f; }
+  void set(int g, int h) {
+    g_ = g;
+    h_ = h;
+    f_ = g + h;
+  }
   //Establecer padre
   void set_padre(int row, int column) {
     row_padre_ = row;

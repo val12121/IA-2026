@@ -7,7 +7,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
   Maps maps(argv[1]);
   maps.Show();
-  AStart astar (maps);
+  AStar astar (maps);
 
   cout << "Origen: " << maps.origen().first << ", "
   << maps.origen().second << endl;
