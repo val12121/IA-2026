@@ -1,8 +1,63 @@
 #include "astar.h"
 
+void AStar::Simulator(Node node_open) {
+  ofstream archivo("salida.txt");
+  int g;
+  open_.push_back(node_open);
+  int iteracion = 0;
+  while (!open_.empty()) {
+  // Mostrar estado actual
+    cout << "Iteración " << iteracion << endl;
+    cout << "-----------" << endl;
+    archivo << "Iteración " << iteracion << endl;
+    archivo << "-----------" << endl;
+    cout << "Abiertos = ";
+    archivo << "Abiertos = ";
+    ShowOpen();
+    ShowOpen(archivo);
+    cout << "Cerrados = ";
+    archivo << "Cerrados = ";
+    ShowClosed();
+    ShowClosed(archivo);
+    cout << "------------------------" << endl;
+    archivo << "------------------------" << endl;
+    Node actual = best_node();
+    erase_node(actual);
+    closed_.push_back(actual);
+
+    if (actual.row() == mapa_.destino().first &&
+      actual.column() == mapa_.destino().second) {
+      g = actual.g();
+      ShowMyWay(actual);
+      ShowMyWay(actual, archivo);
+      ShowMapPath(archivo);
+      break;
+    }
+
+    neighbors_ = Neighbors_(actual);
+    iteracion++;
+  }
+  archivo << "Coste del camino = " << g << endl;
+  cout << "Coste del camino = " << g << endl;
+}
+
 vector<Node> AStar::Neighbors_(Node node)
 {
   vector<Node> result;
+  // arriba
+  if (node.row() > 0) {
+    Node arriba(node.row() - 1, node.column());
+    if (mapa_.get(arriba.row(), arriba.column()) != -1) {
+      result.push_back(arriba);
+    }
+  }
+  // abajo
+  if (node.row() < mapa_.rows() - 1) {
+    Node abajo(node.row() + 1, node.column());
+    if (mapa_.get(abajo.row(), abajo.column()) != -1) {
+      result.push_back(abajo);
+    }
+  }
   // Izquierda
   if (0 < node.column()) {
     Node izquierda(node.row(), node.column() - 1);
@@ -17,21 +72,28 @@ vector<Node> AStar::Neighbors_(Node node)
       result.push_back(derecha);
     }
   }
-  // arriba
-  if (mapa_.rows() - 1 > node.row()) {
-    Node arriba(node.row() - 1, node.column());
-    if (mapa_.get(arriba.row(), arriba.column()) != -1) {
-      result.push_back(arriba);
+  
+  neighbors_ = result;
+  
+  for (int i = 0; i < neighbors_.size(); i++) {
+    if (IsInClosed_(neighbors_[i])) {
+      continue;
+    }
+    int coste = mapa_.get(neighbors_[i].row(), neighbors_[i].column());
+    if (neighbors_[i].row() == mapa_.destino().first &&
+        neighbors_[i].column() == mapa_.destino().second) {
+      coste = 2;
+    }
+
+int g = node.g() + coste;
+    int h = Heuristic(neighbors_[i]);
+    neighbors_[i].set(g, h);
+    neighbors_[i].set_padre(node.row(), node.column());
+    if (!IsInOpen_(neighbors_[i])) {
+      open_.push_back(neighbors_[i]);
     }
   }
-  // abajo
-  if (0 < node.row()) {
-    Node abajo(node.row() + 1, node.column());
-    if (mapa_.get(abajo.row(), abajo.column()) != -1) {
-      result.push_back(abajo);
-    }
-  }
-  return result;
+  return neighbors_;
 }
 
 void AStar::ShowNeighbors() {
@@ -64,4 +126,21 @@ void AStar::ShowClosed() {
 int AStar::Heuristic(Node node) {
   return (2 * (abs(node.row() - mapa_.destino().first) + 
   abs(node.column() - mapa_.destino().second)));
+}
+
+bool AStar::IsInClosed_(Node node) {
+  for (int i = 0; i < closed_.size(); i++) {
+    if (closed_[i].row() == node.row() && closed_[i].column() == node.column()) {
+      return true;
+    }
+  }
+  return false;
+}
+bool AStar::IsInOpen_(Node node) {
+  for (int i = 0; i < open_.size(); i++) {
+    if (open_[i].row() == node.row() && open_[i].column() == node.column()) {
+      return true;
+    }
+  }
+  return false;
 }

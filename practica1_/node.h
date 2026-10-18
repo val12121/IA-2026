@@ -52,9 +52,9 @@ private:
   int row_;
   int column_;
 
-  int g_;
-  int h_;
-  int f_;
+  int g_ = 0;
+  int h_ = 0;
+  int f_ = 0;
 };
 
 #endif
